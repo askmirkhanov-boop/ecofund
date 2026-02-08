@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EcoFund Crowdfunding</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <h1>🌱 EcoFund Crowdfunding</h1>
+      <p class="subtitle">
+        Decentralized funding for eco-friendly initiatives
+      </p>
+
+      <button class="primary-btn" onclick="connectWallet()">
+        Connect Wallet
+      </button>
+
+      <p id="wallet" class="wallet-status">
+        Wallet not connected
+      </p>
+    </header>
+
+    <!-- CREATE CAMPAIGN -->
+    <section class="card">
+      <h2>Create Campaign</h2>
+
+      <input id="title" placeholder="Campaign title" />
+      
+      <textarea
+        id="description"
+        placeholder="Campaign description"
+      ></textarea>
+
+      <input
+        id="goal"
+        type="number"
+        placeholder="Goal (ETH)"
+      />
+
+      <input
+        id="duration"
+        type="number"
+        placeholder="Duration (seconds)"
+      />
+
+      <button onclick="createCampaign()">
+        Create Campaign
+      </button>
+    </section>
+
+    <!-- ACTIVE CAMPAIGNS -->
+    <section>
+      <h2 class="section-title">Active Campaigns</h2>
+
+      <div id="campaigns" class="campaigns">
+        <!-- Campaign cards will be dynamically added here -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ethers -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.12.1/dist/ethers.umd.min.js"></script>
+
+  <!-- app logic -->
+  <script src="app.js"></script>
+</body>
+</html>

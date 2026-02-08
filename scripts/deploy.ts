@@ -1,19 +1,18 @@
-import { ethers } from "hardhat";
+import hre from "hardhat";
 
 async function main() {
-  console.log("Deploying contracts...");
-
-  const Token = await ethers.getContractFactory("EcoRewardToken");
+  const Token = await hre.ethers.getContractFactory("EcoRewardToken");
   const token = await Token.deploy();
   await token.waitForDeployment();
 
-  console.log("EcoRewardToken deployed at:", await token.getAddress());
+  const tokenAddress = await token.getAddress();
+  console.log("Token deployed:", tokenAddress);
 
-  const EcoFund = await ethers.getContractFactory("EcoFund");
-  const ecofund = await EcoFund.deploy(await token.getAddress());
-  await ecofund.waitForDeployment();
+  const EcoFund = await hre.ethers.getContractFactory("EcoFund");
+  const ecoFund = await EcoFund.deploy(tokenAddress);
+  await ecoFund.waitForDeployment();
 
-  console.log("EcoFund deployed at:", await ecofund.getAddress());
+  console.log("EcoFund deployed:", await ecoFund.getAddress());
 }
 
 main().catch((error) => {

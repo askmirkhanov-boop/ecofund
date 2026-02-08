@@ -48,19 +48,37 @@ contract EcoFund {
 
     function contribute(uint256 id) public payable {
         Campaign storage c = campaigns[id];
+
         require(block.timestamp < c.deadline, "Campaign ended");
         require(msg.value > 0, "Send ETH");
 
         c.raised += msg.value;
         contributions[id][msg.sender] += msg.value;
 
+        // reward donor
         token.mint(msg.sender, msg.value);
     }
 
     function finalizeCampaign(uint256 id) public {
         Campaign storage c = campaigns[id];
+
         require(block.timestamp >= c.deadline, "Still active");
+
         c.finished = true;
+    }
+
+    // ✅ NEW — creator withdraws funds
+    function withdraw(uint256 id) public {
+        Campaign storage c = campaigns[id];
+
+        require(block.timestamp >= c.deadline, "Campaign active");
+        require(msg.sender == c.creator, "Not creator");
+        require(c.raised > 0, "Nothing to withdraw");
+
+        uint256 amount = c.raised;
+        c.raised = 0;
+
+        payable(c.creator).transfer(amount);
     }
 
     function getCampaignCount() public view returns (uint256) {
