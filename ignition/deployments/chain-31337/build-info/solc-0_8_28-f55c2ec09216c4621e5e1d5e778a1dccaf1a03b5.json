@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-f55c2ec09216c4621e5e1d5e778a1dccaf1a03b5",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/EcoFund.sol": "project/contracts/EcoFund.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/EcoFund.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.20;\n\ninterface IToken {\n    function mint(address to, uint256 amount) external;\n}\n\ncontract EcoFund {\n\n    struct Campaign {\n        string title;\n        string description;\n        uint256 goal;\n        uint256 deadline;\n        uint256 raised;\n        address creator;\n        bool finished;\n    }\n\n    Campaign[] public campaigns;\n\n    mapping(uint256 => mapping(address => uint256)) public contributions;\n\n    IToken public token;\n\n    constructor(address tokenAddress) {\n        token = IToken(tokenAddress);\n    }\n\n    function createCampaign(\n        string memory title,\n        string memory description,\n        uint256 goal,\n        uint256 duration\n    ) public {\n        campaigns.push(\n            Campaign(\n                title,\n                description,\n                goal,\n                block.timestamp + duration,\n                0,\n                msg.sender,\n                false\n            )\n        );\n    }\n\n    function contribute(uint256 id) public payable {\n        Campaign storage c = campaigns[id];\n        require(block.timestamp < c.deadline, \"Campaign ended\");\n        require(msg.value > 0, \"Send ETH\");\n\n        c.raised += msg.value;\n        contributions[id][msg.sender] += msg.value;\n\n        token.mint(msg.sender, msg.value);\n    }\n\n    function finalizeCampaign(uint256 id) public {\n        Campaign storage c = campaigns[id];\n        require(block.timestamp >= c.deadline, \"Still active\");\n        c.finished = true;\n    }\n\n    function getCampaignCount() public view returns (uint256) {\n        return campaigns.length;\n    }\n}\n"
+      }
+    }
+  }
+}
